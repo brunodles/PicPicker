@@ -19,7 +19,7 @@ import br.com.brunolima.pic_picker.listener.PicResultListener;
 /**
  * Created by brunodles on 10/11/14.
  */
-public class AddImageAsyncTask extends AsyncTask<Void, Void, Bitmap> {
+class AddImageAsyncTask extends AsyncTask<Void, Void, Bitmap> {
 
     private static final String TAG = "AddImageAsyncTask";
 
