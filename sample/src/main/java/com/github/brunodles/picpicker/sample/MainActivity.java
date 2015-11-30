@@ -1,8 +1,14 @@
 package com.github.brunodles.picpicker.sample;
 
+import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -12,15 +18,17 @@ import android.widget.Toast;
 
 import com.github.brunodles.picpicker.R;
 
-import br.com.brunolima.pic_picker.ActivityStarter;
-import br.com.brunolima.pic_picker.CantFindCameraAppExpcetion;
-import br.com.brunolima.pic_picker.ErrorCreatingTempFileForCamera;
+import br.com.brunolima.pic_picker.listener.ActivityStarter;
+import br.com.brunolima.pic_picker.exception.CantFindCameraAppExpcetion;
+import br.com.brunolima.pic_picker.exception.ErrorCreatingTempFileForCamera;
+import br.com.brunolima.pic_picker.exception.NeedPermissionException;
 import br.com.brunolima.pic_picker.PicPicker;
-import br.com.brunolima.pic_picker.PicResultListener;
+import br.com.brunolima.pic_picker.listener.PicResultListener;
 
 public class MainActivity extends AppCompatActivity implements ActivityStarter, PicResultListener,
         View.OnClickListener {
     private static final String TAG = "MainActivity";
+    private static final int RC_WRITE_EXTERNAL_STORAGE = 42;
 
     private Button galery;
     private Button camera;
@@ -34,7 +42,7 @@ public class MainActivity extends AppCompatActivity implements ActivityStarter, 
         galery = (Button) findViewById(R.id.galery);
         camera = (Button) findViewById(R.id.camera);
         image = (ImageView) findViewById(R.id.image);
-        picPicker = new PicPicker(image, this).setListener(this);
+        picPicker = new PicPicker(image, this).setResultListener(this);
 
         galery.setOnClickListener(this);
         camera.setOnClickListener(this);
@@ -44,7 +52,20 @@ public class MainActivity extends AppCompatActivity implements ActivityStarter, 
     public void onPictureResult(Bitmap bitmap) {
         Log.d(TAG, "onPictureResult: ");
         // do something
-        image.setImageBitmap(bitmap);
+    }
+
+    @Override
+    public void onException(Exception e) {
+        if (e instanceof CantFindCameraAppExpcetion) {
+            Log.e(TAG, "onClick: ", e);
+            Toast.makeText(this, "Can't find the camera app", Toast.LENGTH_SHORT).show();
+        } else if (e instanceof ErrorCreatingTempFileForCamera) {
+            Log.e(TAG, "onClick: ", e);
+            Toast.makeText(this, "Error starting camera", Toast.LENGTH_SHORT).show();
+        } else if (e instanceof NeedPermissionException) {
+            Log.e(TAG, "onClick: ", e);
+            askPermission();
+        }
     }
 
     @Override
@@ -52,15 +73,43 @@ public class MainActivity extends AppCompatActivity implements ActivityStarter, 
         if (v == galery)
             picPicker.gallery();
         else if (v == camera)
-            try {
-                picPicker.camera();
-            } catch (CantFindCameraAppExpcetion e) {
-                Log.e(TAG, "onClick: ", e);
-                Toast.makeText(this, "Can't find the camera app", Toast.LENGTH_SHORT).show();
-            } catch (ErrorCreatingTempFileForCamera e) {
-                Log.e(TAG, "onClick: ", e);
-                Toast.makeText(this, "Error starting camera", Toast.LENGTH_SHORT).show();
-            }
+            picPicker.camera();
+    }
+
+    private void askPermission() {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            // Show an expanation to the user *asynchronously* -- don't block
+            // this thread waiting for the user's response! After the user
+            // sees the explanation, try again to request the permission.
+            new AlertDialog.Builder(this)
+                    .setMessage("We need to write on disk to use camera.")
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            ActivityCompat.requestPermissions(MainActivity.this,
+                                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                    RC_WRITE_EXTERNAL_STORAGE);
+                        }
+                    })
+                    .show();
+        } else {
+            // No explanation needed, we can request the permission.
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    RC_WRITE_EXTERNAL_STORAGE);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case RC_WRITE_EXTERNAL_STORAGE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                    onClick(camera);
+                break;
+        }
     }
 
     @Override
