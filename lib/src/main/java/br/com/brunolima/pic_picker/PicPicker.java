@@ -28,7 +28,7 @@ import br.com.brunolima.pic_picker.listener.PicResultListener;
 /**
  * Created by brunodles on 10/11/14.
  */
-public class PicPicker {
+public final class PicPicker {
 
     private static final String TAG = "PicPicker";
 
