@@ -14,6 +14,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import br.com.brunolima.pic_picker.listener.PicResultListener;
+
 /**
  * Created by brunodles on 10/11/14.
  */
@@ -63,13 +65,13 @@ public class AddImageAsyncTask extends AsyncTask<Void, Void, Bitmap> {
 //          bitmap = getScaledBitmapFromFile();
 //            logBitmapSizes("scaledFile", bitmap);
 //            if (bitmap == null) {
-            bitmap = getScaledBitmapFromStream();
-            logBitmapSizes("scaledFromStream", bitmap);
+//            bitmap = getScaledBitmapFromStream();
+//            logBitmapSizes("scaledFromStream", bitmap);
 //            }
-            if (bitmap == null) {
+//            if (bitmap == null) {
                 bitmap = getBitmapFromStream();
                 logBitmapSizes("fromStream", bitmap);
-            }
+//            }
             if (bitmap == null)
                 return null;
             return compress(bitmap);

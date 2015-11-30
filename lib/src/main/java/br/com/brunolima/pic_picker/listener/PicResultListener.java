@@ -1,4 +1,4 @@
-package br.com.brunolima.pic_picker;
+package br.com.brunolima.pic_picker.listener;
 
 import android.graphics.Bitmap;
 
@@ -7,4 +7,6 @@ import android.graphics.Bitmap;
  */
 public interface PicResultListener {
     void onPictureResult(Bitmap bitmap);
+
+    void onException(Exception e);
 }
