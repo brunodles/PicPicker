@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
@@ -26,6 +27,9 @@ import br.com.brunolima.pic_picker.listener.NeedWritePermissionErrorListener;
 import br.com.brunolima.pic_picker.listener.PicResultListener;
 
 /**
+ * This class will be the main interface to request a picture.
+ * You can do this by calling {@link #gallery()} or {@link #camera()}.
+ * This class uses a `Method chaining` pattern to set the parameters.
  * Created by brunodles on 10/11/14.
  */
 public final class PicPicker {
@@ -44,31 +48,70 @@ public final class PicPicker {
     private NeedWritePermissionErrorListener permissionErrorListener;
     private ErrorCreatingTempFileForCameraListener fileForCameraListener;
 
+    /**
+     * @param userImage       A view to send the image.
+     * @param activityStarter an activity starter, can be an {@link Activity} or an
+     *                        {@link android.support.v4.app.Fragment}
+     */
     public PicPicker(ImageView userImage, ActivityStarter activityStarter) {
         this.userImage = userImage;
         this.activityStarter = activityStarter;
     }
 
+    /**
+     * A method to set the listener.
+     * All images captured by this class will be passed to this listener on
+     * {@link PicResultListener#onPictureResult(Bitmap)}.
+     *
+     * @param listener A interface able to receive results.
+     */
     public PicPicker setResultListener(PicResultListener listener) {
         this.listener = listener;
         return this;
     }
 
+    /**
+     * A method to set a listener for camera app error.
+     * When the lib can't find the camera app, the error will be sent thought this interface.
+     *
+     * @param cameraAppErrorListener
+     */
     public PicPicker setCameraAppErrorListener(CantFindCameraAppErrorListener cameraAppErrorListener) {
         this.cameraAppErrorListener = cameraAppErrorListener;
         return this;
     }
 
+    /**
+     * A method to set a listener for permission error.
+     * When user is using Android Marshmallow he will need to authorize the app to use the external
+     * storage to write a temp file.
+     *
+     * @param permissionErrorListener This is a interface that will be called when we need to
+     *                                request camera permission.
+     */
     public PicPicker setPermissionErrorListener(NeedWritePermissionErrorListener permissionErrorListener) {
         this.permissionErrorListener = permissionErrorListener;
         return this;
     }
 
+    /**
+     * A method to set a listener for temp file error.
+     * To use camera, the app will need to create a temp file.
+     * But if it fail you can know it just implementing this interface.
+     *
+     * @param fileForCameraListener This is a interface that will be called when an error was throw
+     *                              when we try to create a temp file.
+     */
     public PicPicker setFileForCameraListener(ErrorCreatingTempFileForCameraListener fileForCameraListener) {
         this.fileForCameraListener = fileForCameraListener;
         return this;
     }
 
+    /**
+     * This method will start the gallery.
+     * The result will be passed to the result listener.
+     * To set the listener just call {@link #setResultListener(PicResultListener)}.
+     */
     public void gallery() {
         Intent intent = new Intent();
         intent.setType("image/*");
@@ -81,6 +124,11 @@ public final class PicPicker {
         activityStarter.startActivityForResult(intent, requestCodeAttachImage);
     }
 
+    /**
+     * This method will start the camera.
+     * The result will be passed to the result listener.
+     * To set the listener just call {@link #setResultListener(PicResultListener)}.
+     */
     public void camera() {
         int permissionCheck = ContextCompat.checkSelfPermission(getContext(),
                 Manifest.permission.WRITE_EXTERNAL_STORAGE);
@@ -155,6 +203,14 @@ public final class PicPicker {
         );
     }
 
+    /**
+     * To let the lib know when the user choose a image you will need to call this method from an
+     * {@link Activity#onActivityResult(int, int, Intent)} or from a
+     * {@link android.support.v4.app.Fragment#onActivityResult(int, int, Intent)}
+     *
+     * @return if the result is false call the default implementation. A true result means that the
+     * lib made something.
+     */
     public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK)
             switch (requestCode) {
