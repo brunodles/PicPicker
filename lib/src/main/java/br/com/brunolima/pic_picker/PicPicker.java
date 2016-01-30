@@ -36,8 +36,14 @@ public final class PicPicker {
 
     private static final String TAG = "PicPicker";
 
-    private static final int REQUEST_CODE_ATTACH_IMAGE = 9123;
-    private static final int REQUEST_CODE_TAKE_PICURE = 9124;
+    /**
+     * You can change this variable to change the request code used to open gallery
+     */
+    public static int REQUEST_CODE_ATTACH_IMAGE = 9123;
+    /**
+     * You can change the variable to change the request code used to open camera
+     */
+    public static int REQUEST_CODE_TAKE_PICURE = 9124;
 
     private Uri fileUri;
     private ImageView userImage;
@@ -213,17 +219,16 @@ public final class PicPicker {
      */
     public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK)
-            switch (requestCode) {
-                case REQUEST_CODE_ATTACH_IMAGE:
-                    new AddImageAsyncTask(userImage, data.getData())
-                            .setListener(listener)
-                            .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                    return true;
-                case REQUEST_CODE_TAKE_PICURE:
-                    new AddImageAsyncTask(userImage, fileUri)
-                            .setListener(listener)
-                            .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                    return true;
+            if (requestCode == REQUEST_CODE_ATTACH_IMAGE) {
+                new AddImageAsyncTask(userImage, data.getData())
+                        .setListener(listener)
+                        .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                return true;
+            } else if (requestCode == REQUEST_CODE_TAKE_PICURE) {
+                new AddImageAsyncTask(userImage, fileUri)
+                        .setListener(listener)
+                        .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                return true;
             }
         return false;
     }
