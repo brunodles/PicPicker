@@ -18,11 +18,11 @@ import android.widget.Toast;
 
 import com.github.brunodles.picpicker.R;
 
-import br.com.brunolima.pic_picker.listener.ActivityStarter;
-import br.com.brunolima.pic_picker.exception.CantFindCameraAppExpcetion;
-import br.com.brunolima.pic_picker.exception.ErrorCreatingTempFileForCamera;
-import br.com.brunolima.pic_picker.exception.NeedPermissionException;
 import br.com.brunolima.pic_picker.PicPicker;
+import br.com.brunolima.pic_picker.listener.ActivityStarter;
+import br.com.brunolima.pic_picker.listener.CantFindCameraAppErrorListener;
+import br.com.brunolima.pic_picker.listener.ErrorCreatingTempFileForCameraListener;
+import br.com.brunolima.pic_picker.listener.NeedWritePermissionErrorListener;
 import br.com.brunolima.pic_picker.listener.PicResultListener;
 
 public class MainActivity extends AppCompatActivity implements ActivityStarter, PicResultListener,
@@ -42,7 +42,28 @@ public class MainActivity extends AppCompatActivity implements ActivityStarter, 
         galery = (Button) findViewById(R.id.galery);
         camera = (Button) findViewById(R.id.camera);
         image = (ImageView) findViewById(R.id.image);
-        picPicker = new PicPicker(image, this).setResultListener(this);
+        picPicker = new PicPicker(image, this).setResultListener(this)
+                .setFileForCameraListener(new ErrorCreatingTempFileForCameraListener() {
+                    @Override
+                    public void errorCreatingTempFileForCamera() {
+                        Log.e(TAG, "errorCreatingTempFileForCamera: ");
+                        Toast.makeText(MainActivity.this, "Error starting camera", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setCameraAppErrorListener(new CantFindCameraAppErrorListener() {
+                    @Override
+                    public void cantFindCameraApp() {
+                        Log.e(TAG, "cantFindCameraApp: ");
+                        Toast.makeText(MainActivity.this, "Can't find the camera app", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setPermissionErrorListener(new NeedWritePermissionErrorListener() {
+                    @Override
+                    public void needWritePermission() {
+                        Log.e(TAG, "needWritePermission: ");
+                        askPermission();
+                    }
+                });
 
         galery.setOnClickListener(this);
         camera.setOnClickListener(this);
@@ -52,20 +73,6 @@ public class MainActivity extends AppCompatActivity implements ActivityStarter, 
     public void onPictureResult(Bitmap bitmap) {
         Log.d(TAG, "onPictureResult: ");
         // do something
-    }
-
-    @Override
-    public void onException(Exception e) {
-        if (e instanceof CantFindCameraAppExpcetion) {
-            Log.e(TAG, "onClick: ", e);
-            Toast.makeText(this, "Can't find the camera app", Toast.LENGTH_SHORT).show();
-        } else if (e instanceof ErrorCreatingTempFileForCamera) {
-            Log.e(TAG, "onClick: ", e);
-            Toast.makeText(this, "Error starting camera", Toast.LENGTH_SHORT).show();
-        } else if (e instanceof NeedPermissionException) {
-            Log.e(TAG, "onClick: ", e);
-            askPermission();
-        }
     }
 
     @Override
