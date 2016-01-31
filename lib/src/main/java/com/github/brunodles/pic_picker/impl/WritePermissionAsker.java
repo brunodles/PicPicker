@@ -12,7 +12,7 @@ import android.support.v7.app.AlertDialog;
 import com.github.brunodles.pic_picker.listener.NeedWritePermissionErrorListener;
 
 /**
- * This class can be passed as parameter to {@link br.com.brunolima.pic_picker.PicPicker} as a
+ * This class can be passed as parameter to {@link com.github.brunodles.pic_picker.PicPicker} as a
  * Listener.
  * Created by bruno on 30/01/16.
  */
