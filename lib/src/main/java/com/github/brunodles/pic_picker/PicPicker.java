@@ -214,16 +214,24 @@ public final class PicPicker {
      * lib made something.
      */
     public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == Activity.RESULT_OK)
-            if (requestCode == REQUEST_CODE_ATTACH_IMAGE) {
-                new AddImageAsyncTask(context, data.getData(), listener)
-                        .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                return true;
-            } else if (requestCode == REQUEST_CODE_TAKE_PICURE) {
-                new AddImageAsyncTask(context, fileUri, listener)
-                        .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        if (resultCode == Activity.RESULT_OK) {
+            Uri uri = getUri(requestCode, data);
+            if (uri != null) {
+                executeImageAsyncTask(uri);
                 return true;
             }
+        }
         return false;
+    }
+
+    private Uri getUri(int requestCode, Intent data) {
+        if (requestCode == REQUEST_CODE_ATTACH_IMAGE) return data.getData();
+        else if (requestCode == REQUEST_CODE_TAKE_PICURE) return fileUri;
+        else return null;
+    }
+
+    private void executeImageAsyncTask(Uri uri) {
+        new AddImageAsyncTask(context, uri, listener)
+                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 }
