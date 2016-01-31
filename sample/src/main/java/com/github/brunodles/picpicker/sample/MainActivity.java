@@ -41,20 +41,8 @@ public class MainActivity extends AppCompatActivity implements ActivityStarter, 
         camera = (Button) findViewById(R.id.camera);
         image = (ImageView) findViewById(R.id.image);
         picPicker = new PicPicker(image, this).setResultListener(this)
-                .setFileForCameraListener(new ErrorCreatingTempFileForCameraListener() {
-                    @Override
-                    public void errorCreatingTempFileForCamera() {
-                        Log.e(TAG, "errorCreatingTempFileForCamera: ");
-                        Toast.makeText(MainActivity.this, "Error starting camera", Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .setCameraAppErrorListener(new CantFindCameraAppErrorListener() {
-                    @Override
-                    public void cantFindCameraApp() {
-                        Log.e(TAG, "cantFindCameraApp: ");
-                        Toast.makeText(MainActivity.this, "Can't find the camera app", Toast.LENGTH_SHORT).show();
-                    }
-                })
+                .setFileForCameraListener(fileForCameraListener)
+                .setCameraAppErrorListener(cameraAppErrorListener)
                 .setPermissionErrorListener(writePermissionAsker);
 
         galery.setOnClickListener(this);
@@ -87,4 +75,19 @@ public class MainActivity extends AppCompatActivity implements ActivityStarter, 
         if (!picPicker.onActivityResult(requestCode, resultCode, data))
             super.onActivityResult(requestCode, resultCode, data);
     }
+
+    private CantFindCameraAppErrorListener cameraAppErrorListener = new CantFindCameraAppErrorListener() {
+        @Override
+        public void cantFindCameraApp() {
+            Log.e(TAG, "cantFindCameraApp: ");
+            Toast.makeText(MainActivity.this, "Can't find the camera app", Toast.LENGTH_SHORT).show();
+        }
+    };
+    private ErrorCreatingTempFileForCameraListener fileForCameraListener = new ErrorCreatingTempFileForCameraListener() {
+        @Override
+        public void errorCreatingTempFileForCamera() {
+            Log.e(TAG, "errorCreatingTempFileForCamera: ");
+            Toast.makeText(MainActivity.this, "Error starting camera", Toast.LENGTH_SHORT).show();
+        }
+    };
 }
