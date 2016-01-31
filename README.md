@@ -37,17 +37,21 @@ response will be sent.
 
 Now we need to pass the result to the lib and to do that we just need to _override_
 `onActivityResult` and pass it's parameters to the lib, just like that.
-```@Override
+```
+@Override
 protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     picPicker.onActivityResult(requestCode, resultCode, data);
     super.onActivityResult(requestCode, resultCode, data);
-}```
+}
+```
+
 You can even make a validation to check if the lib had used those parameters, it returns `true`
 when made something to it.
 
 ## Using it
 Now to use the lib is so simple, to pick a image from the gallery just call.
 ```picPicker.gallery();```
+
 If you want to grab a image from the camera call.
 ```picPicker.camera();```
 
