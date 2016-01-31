@@ -23,6 +23,7 @@ import br.com.brunolima.pic_picker.listener.PicResultListener;
 public class MainActivity extends AppCompatActivity implements ActivityStarter, PicResultListener,
         View.OnClickListener {
     private static final String TAG = "MainActivity";
+    // This is the request code used to ask write permission
     private static final int RC_WRITE_EXTERNAL_STORAGE = 42;
 
     private Button galery;
@@ -35,12 +36,16 @@ public class MainActivity extends AppCompatActivity implements ActivityStarter, 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        writePermissionAsker = new WritePermissionAsker(this, RC_WRITE_EXTERNAL_STORAGE, R.string.permission_message);
-
         galery = (Button) findViewById(R.id.galery);
         camera = (Button) findViewById(R.id.camera);
         image = (ImageView) findViewById(R.id.image);
-        picPicker = new PicPicker(image, this).setResultListener(this)
+
+        // This is the default impelementation of the permission asker, but you can write your own.
+        writePermissionAsker = new WritePermissionAsker(this, RC_WRITE_EXTERNAL_STORAGE,
+                R.string.permission_message);
+        // Prepare the picPicker
+        picPicker = new PicPicker(image, this)
+                .setResultListener(this)
                 .setFileForCameraListener(fileForCameraListener)
                 .setCameraAppErrorListener(cameraAppErrorListener)
                 .setPermissionErrorListener(writePermissionAsker);
@@ -66,12 +71,16 @@ public class MainActivity extends AppCompatActivity implements ActivityStarter, 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
+        // You need to pass the persmission result to writePermissionAsker, so the lib can check
+        // if the app have write permission. Having permission we start the camera.
         if (writePermissionAsker.onRequestPermissionsResult(requestCode, permissions, grantResults))
-            onClick(camera);
+            picPicker.camera();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // You need to pass the activity result to picPicker, so the lib can check the response from
+        // the gallery or camera.
         if (!picPicker.onActivityResult(requestCode, resultCode, data))
             super.onActivityResult(requestCode, resultCode, data);
     }
