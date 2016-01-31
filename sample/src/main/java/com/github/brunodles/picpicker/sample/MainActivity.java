@@ -17,7 +17,6 @@ import com.github.brunodles.pic_picker.listener.ActivityStarter;
 import com.github.brunodles.pic_picker.listener.CantFindCameraAppErrorListener;
 import com.github.brunodles.pic_picker.listener.ErrorCreatingTempFileForCameraListener;
 import com.github.brunodles.pic_picker.listener.PicResultListener;
-import com.github.brunodles.picpicker.R;
 
 public class MainActivity extends AppCompatActivity implements ActivityStarter, PicResultListener,
         View.OnClickListener {
