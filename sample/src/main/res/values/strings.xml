@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">PicPicker Sample</string>
+    <string name="permission_message">We need to write on disk to use camera.</string>
 </resources>

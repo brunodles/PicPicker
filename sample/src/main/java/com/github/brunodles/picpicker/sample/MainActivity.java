@@ -1,14 +1,9 @@
 package com.github.brunodles.picpicker.sample;
 
-import android.Manifest;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -19,10 +14,10 @@ import android.widget.Toast;
 import com.github.brunodles.picpicker.R;
 
 import br.com.brunolima.pic_picker.PicPicker;
+import br.com.brunolima.pic_picker.impl.WritePermissionAsker;
 import br.com.brunolima.pic_picker.listener.ActivityStarter;
 import br.com.brunolima.pic_picker.listener.CantFindCameraAppErrorListener;
 import br.com.brunolima.pic_picker.listener.ErrorCreatingTempFileForCameraListener;
-import br.com.brunolima.pic_picker.listener.NeedWritePermissionErrorListener;
 import br.com.brunolima.pic_picker.listener.PicResultListener;
 
 public class MainActivity extends AppCompatActivity implements ActivityStarter, PicResultListener,
@@ -34,11 +29,14 @@ public class MainActivity extends AppCompatActivity implements ActivityStarter, 
     private Button camera;
     private ImageView image;
     private PicPicker picPicker;
+    private WritePermissionAsker writePermissionAsker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        writePermissionAsker = new WritePermissionAsker(this, RC_WRITE_EXTERNAL_STORAGE, R.string.permission_message);
+
         galery = (Button) findViewById(R.id.galery);
         camera = (Button) findViewById(R.id.camera);
         image = (ImageView) findViewById(R.id.image);
@@ -57,13 +55,7 @@ public class MainActivity extends AppCompatActivity implements ActivityStarter, 
                         Toast.makeText(MainActivity.this, "Can't find the camera app", Toast.LENGTH_SHORT).show();
                     }
                 })
-                .setPermissionErrorListener(new NeedWritePermissionErrorListener() {
-                    @Override
-                    public void needWritePermission() {
-                        Log.e(TAG, "needWritePermission: ");
-                        askPermission();
-                    }
-                });
+                .setPermissionErrorListener(writePermissionAsker);
 
         galery.setOnClickListener(this);
         camera.setOnClickListener(this);
@@ -83,45 +75,16 @@ public class MainActivity extends AppCompatActivity implements ActivityStarter, 
             picPicker.camera();
     }
 
-    private void askPermission() {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            // Show an expanation to the user *asynchronously* -- don't block
-            // this thread waiting for the user's response! After the user
-            // sees the explanation, try again to request the permission.
-            new AlertDialog.Builder(this)
-                    .setMessage("We need to write on disk to use camera.")
-                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            ActivityCompat.requestPermissions(MainActivity.this,
-                                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                                    RC_WRITE_EXTERNAL_STORAGE);
-                        }
-                    })
-                    .show();
-        } else {
-            // No explanation needed, we can request the permission.
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                    RC_WRITE_EXTERNAL_STORAGE);
-        }
-    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case RC_WRITE_EXTERNAL_STORAGE:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                    onClick(camera);
-                break;
-        }
+        if (writePermissionAsker.onRequestPermissionsResult(requestCode, permissions, grantResults))
+            onClick(camera);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        picPicker.onActivityResult(requestCode, resultCode, data);
+        if (!picPicker.onActivityResult(requestCode, resultCode, data))
+            super.onActivityResult(requestCode, resultCode, data);
     }
 }
