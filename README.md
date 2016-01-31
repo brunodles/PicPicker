@@ -50,10 +50,14 @@ when made something to it.
 
 ## Using it
 Now to use the lib is so simple, to pick a image from the gallery just call.
-```picPicker.gallery();```
+```
+picPicker.gallery();
+```
 
 If you want to grab a image from the camera call.
-```picPicker.camera();```
+```
+picPicker.camera();
+```
 
 # Sample
 You can see more thing on sample, it have some explanations too.
