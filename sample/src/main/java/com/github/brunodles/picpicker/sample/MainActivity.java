@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.github.brunodles.pic_picker.PicPicker;
 import com.github.brunodles.pic_picker.impl.WritePermissionAsker;
 import com.github.brunodles.pic_picker.listener.ActivityStarter;
+import com.github.brunodles.pic_picker.listener.AnimationListener;
 import com.github.brunodles.pic_picker.listener.CantFindCameraAppErrorListener;
 import com.github.brunodles.pic_picker.listener.ErrorCreatingTempFileForCameraListener;
 import com.github.brunodles.pic_picker.listener.PicResultListener;
@@ -46,7 +47,8 @@ public class MainActivity extends AppCompatActivity implements ActivityStarter, 
                 .setResultListener(this)
                 .setFileForCameraListener(fileForCameraListener)
                 .setCameraAppErrorListener(cameraAppErrorListener)
-                .setPermissionErrorListener(writePermissionAsker);
+                .setPermissionErrorListener(writePermissionAsker)
+                .setAnimationListener(animationListener);
 
         galery.setOnClickListener(this);
         camera.setOnClickListener(this);
@@ -95,6 +97,28 @@ public class MainActivity extends AppCompatActivity implements ActivityStarter, 
         public void errorCreatingTempFileForCamera() {
             Log.e(TAG, "errorCreatingTempFileForCamera: ");
             Toast.makeText(MainActivity.this, "Error starting camera", Toast.LENGTH_SHORT).show();
+        }
+    };
+    private final AnimationListener animationListener = new AnimationListener() {
+        @Override
+        public void onPreExecute(ImageView imageView) {
+            imageView.setAlpha(0.5f);
+        }
+
+        @Override
+        public void onBeforeSetBitmap(ImageView imageView) {
+            imageView.setAlpha(0.2f);
+        }
+
+        @Override
+        public void onAfterSetBitmap(ImageView imageView) {
+            imageView.setAlpha(1f);
+        }
+
+        @Override
+        public void onFail(ImageView imageView) {
+            imageView.setImageResource(android.R.color.white);
+            imageView.setAlpha(1f);
         }
     };
 }
