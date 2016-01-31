@@ -11,11 +11,13 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.ImageView;
 
 import com.github.brunodles.pic_picker.listener.ActivityStarter;
+import com.github.brunodles.pic_picker.listener.AnimationListener;
 import com.github.brunodles.pic_picker.listener.CantFindCameraAppErrorListener;
 import com.github.brunodles.pic_picker.listener.ErrorCreatingTempFileForCameraListener;
 import com.github.brunodles.pic_picker.listener.NeedWritePermissionErrorListener;
@@ -50,6 +52,7 @@ public final class PicPicker {
     private ImageView userImage;
     private ActivityStarter activityStarter;
     private PicResultListener listener;
+    private AnimationListener animationListener;
 
     private CantFindCameraAppErrorListener cameraAppErrorListener;
     private NeedWritePermissionErrorListener permissionErrorListener;
@@ -111,6 +114,16 @@ public final class PicPicker {
      */
     public PicPicker setFileForCameraListener(ErrorCreatingTempFileForCameraListener fileForCameraListener) {
         this.fileForCameraListener = fileForCameraListener;
+        return this;
+    }
+
+    /**
+     * A method to set a Listener for animations.
+     *
+     * @param animationListener This interfce let you add animations to the ImageView in certainMoments
+     */
+    public PicPicker setAnimationListener(AnimationListener animationListener) {
+        this.animationListener = animationListener;
         return this;
     }
 
@@ -219,18 +232,25 @@ public final class PicPicker {
      * lib made something.
      */
     public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == Activity.RESULT_OK)
-            if (requestCode == REQUEST_CODE_ATTACH_IMAGE) {
-                new AddImageAsyncTask(userImage, data.getData())
+        if (resultCode == Activity.RESULT_OK) {
+            Uri uri = getUri(requestCode, data);
+            if (uri != null) {
+                new AddImageAsyncTask(userImage, uri)
                         .setListener(listener)
-                        .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                return true;
-            } else if (requestCode == REQUEST_CODE_TAKE_PICURE) {
-                new AddImageAsyncTask(userImage, fileUri)
-                        .setListener(listener)
+                        .setAnimationListener(animationListener)
                         .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 return true;
             }
+        }
         return false;
+    }
+
+    @Nullable
+    private Uri getUri(int requestCode, Intent data) {
+        if (requestCode == REQUEST_CODE_ATTACH_IMAGE)
+            return data.getData();
+        else if (requestCode == REQUEST_CODE_TAKE_PICURE)
+            return fileUri;
+        return null;
     }
 }
