@@ -118,7 +118,6 @@ public final class PicPicker {
     /**
      * This method will start the gallery.
      * The result will be passed to the result listener.
-     * To set the listener just call {@link #setResultListener(PicResultListener)}.
      */
     public void gallery() {
         Intent intent = new Intent();
@@ -135,7 +134,6 @@ public final class PicPicker {
     /**
      * This method will start the camera.
      * The result will be passed to the result listener.
-     * To set the listener just call {@link #setResultListener(PicResultListener)}.
      */
     public void camera() {
         int permissionCheck = ContextCompat.checkSelfPermission(context,
