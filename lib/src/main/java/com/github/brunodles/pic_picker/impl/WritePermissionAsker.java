@@ -1,4 +1,4 @@
-package br.com.brunolima.pic_picker.impl;
+package com.github.brunodles.pic_picker.impl;
 
 import android.Manifest;
 import android.app.Activity;
@@ -9,7 +9,7 @@ import android.support.annotation.StringRes;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 
-import br.com.brunolima.pic_picker.listener.NeedWritePermissionErrorListener;
+import com.github.brunodles.pic_picker.listener.NeedWritePermissionErrorListener;
 
 /**
  * This class can be passed as parameter to {@link br.com.brunolima.pic_picker.PicPicker} as a

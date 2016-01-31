@@ -1,4 +1,4 @@
-package br.com.brunolima.pic_picker;
+package com.github.brunodles.pic_picker;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -15,16 +15,17 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.ImageView;
 
+import com.github.brunodles.pic_picker.listener.ActivityStarter;
+import com.github.brunodles.pic_picker.listener.CantFindCameraAppErrorListener;
+import com.github.brunodles.pic_picker.listener.ErrorCreatingTempFileForCameraListener;
+import com.github.brunodles.pic_picker.listener.NeedWritePermissionErrorListener;
+import com.github.brunodles.pic_picker.listener.PicResultListener;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import br.com.brunolima.pic_picker.listener.ActivityStarter;
-import br.com.brunolima.pic_picker.listener.CantFindCameraAppErrorListener;
-import br.com.brunolima.pic_picker.listener.ErrorCreatingTempFileForCameraListener;
-import br.com.brunolima.pic_picker.listener.NeedWritePermissionErrorListener;
-import br.com.brunolima.pic_picker.listener.PicResultListener;
 
 /**
  * This class will be the main interface to request a picture.

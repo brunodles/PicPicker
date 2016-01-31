@@ -1,4 +1,4 @@
-package br.com.brunolima.pic_picker;
+package com.github.brunodles.pic_picker;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -10,11 +10,11 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
+import com.github.brunodles.pic_picker.listener.PicResultListener;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-
-import br.com.brunolima.pic_picker.listener.PicResultListener;
 
 /**
  * Created by brunodles on 10/11/14.

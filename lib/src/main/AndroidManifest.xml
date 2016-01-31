@@ -1,4 +1,4 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="br.com.brunolima.pic_picker">
+          package="com.github.brunodles.pic_picker">
 
 </manifest>

@@ -11,14 +11,13 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.github.brunodles.pic_picker.PicPicker;
+import com.github.brunodles.pic_picker.impl.WritePermissionAsker;
+import com.github.brunodles.pic_picker.listener.ActivityStarter;
+import com.github.brunodles.pic_picker.listener.CantFindCameraAppErrorListener;
+import com.github.brunodles.pic_picker.listener.ErrorCreatingTempFileForCameraListener;
+import com.github.brunodles.pic_picker.listener.PicResultListener;
 import com.github.brunodles.picpicker.R;
-
-import br.com.brunolima.pic_picker.PicPicker;
-import br.com.brunolima.pic_picker.impl.WritePermissionAsker;
-import br.com.brunolima.pic_picker.listener.ActivityStarter;
-import br.com.brunolima.pic_picker.listener.CantFindCameraAppErrorListener;
-import br.com.brunolima.pic_picker.listener.ErrorCreatingTempFileForCameraListener;
-import br.com.brunolima.pic_picker.listener.PicResultListener;
 
 public class MainActivity extends AppCompatActivity implements ActivityStarter, PicResultListener,
         View.OnClickListener {
