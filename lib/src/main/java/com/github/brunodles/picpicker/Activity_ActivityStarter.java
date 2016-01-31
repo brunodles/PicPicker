@@ -1,9 +1,9 @@
-package com.github.brunodles.pic_picker;
+package com.github.brunodles.picpicker;
 
 import android.app.Activity;
 import android.content.Intent;
 
-import com.github.brunodles.pic_picker.listener.ActivityStarter;
+import com.github.brunodles.picpicker.listener.ActivityStarter;
 
 /**
  * Created by bruno on 31/01/16.

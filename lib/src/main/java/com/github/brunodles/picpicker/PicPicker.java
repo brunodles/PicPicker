@@ -1,4 +1,4 @@
-package com.github.brunodles.pic_picker;
+package com.github.brunodles.picpicker;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -14,11 +14,11 @@ import android.provider.MediaStore;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
-import com.github.brunodles.pic_picker.listener.ActivityStarter;
-import com.github.brunodles.pic_picker.listener.CantFindCameraAppErrorListener;
-import com.github.brunodles.pic_picker.listener.ErrorCreatingTempFileForCameraListener;
-import com.github.brunodles.pic_picker.listener.NeedWritePermissionErrorListener;
-import com.github.brunodles.pic_picker.listener.PicResultListener;
+import com.github.brunodles.picpicker.listener.ActivityStarter;
+import com.github.brunodles.picpicker.listener.CantFindCameraAppErrorListener;
+import com.github.brunodles.picpicker.listener.ErrorCreatingTempFileForCameraListener;
+import com.github.brunodles.picpicker.listener.NeedWritePermissionErrorListener;
+import com.github.brunodles.picpicker.listener.PicResultListener;
 
 import java.io.File;
 import java.io.IOException;

@@ -1,4 +1,4 @@
-package com.github.brunodles.pic_picker.listener;
+package com.github.brunodles.picpicker.listener;
 
 /**
  * This interface will be called when the lib fails to find the camera app.

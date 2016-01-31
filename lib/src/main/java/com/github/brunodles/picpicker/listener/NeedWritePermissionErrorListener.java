@@ -1,4 +1,4 @@
-package com.github.brunodles.pic_picker.listener;
+package com.github.brunodles.picpicker.listener;
 
 /**
  * This interface will be called when the user need to be authorize the app to write a temp file.

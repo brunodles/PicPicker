@@ -1,4 +1,4 @@
-package com.github.brunodles.pic_picker.listener;
+package com.github.brunodles.picpicker.listener;
 
 import android.graphics.Bitmap;
 

@@ -12,12 +12,12 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.github.brunodles.compressor.BitmapCompressor;
-import com.github.brunodles.pic_picker.PicPicker;
-import com.github.brunodles.pic_picker.impl.WritePermissionAsker;
-import com.github.brunodles.pic_picker.listener.ActivityStarter;
-import com.github.brunodles.pic_picker.listener.CantFindCameraAppErrorListener;
-import com.github.brunodles.pic_picker.listener.ErrorCreatingTempFileForCameraListener;
-import com.github.brunodles.pic_picker.listener.PicResultListener;
+import com.github.brunodles.picpicker.PicPicker;
+import com.github.brunodles.picpicker.impl.WritePermissionAsker;
+import com.github.brunodles.picpicker.listener.ActivityStarter;
+import com.github.brunodles.picpicker.listener.CantFindCameraAppErrorListener;
+import com.github.brunodles.picpicker.listener.ErrorCreatingTempFileForCameraListener;
+import com.github.brunodles.picpicker.listener.PicResultListener;
 
 public class MainActivity extends AppCompatActivity implements ActivityStarter,
         View.OnClickListener {

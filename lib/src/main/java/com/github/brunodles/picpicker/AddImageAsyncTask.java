@@ -1,4 +1,4 @@
-package com.github.brunodles.pic_picker;
+package com.github.brunodles.picpicker;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -7,7 +7,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.github.brunodles.pic_picker.listener.PicResultListener;
+import com.github.brunodles.picpicker.listener.PicResultListener;
 
 import java.io.IOException;
 import java.io.InputStream;
