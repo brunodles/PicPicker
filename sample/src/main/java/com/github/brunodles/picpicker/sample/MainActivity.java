@@ -18,7 +18,7 @@ import com.github.brunodles.pic_picker.listener.CantFindCameraAppErrorListener;
 import com.github.brunodles.pic_picker.listener.ErrorCreatingTempFileForCameraListener;
 import com.github.brunodles.pic_picker.listener.PicResultListener;
 
-public class MainActivity extends AppCompatActivity implements ActivityStarter, PicResultListener,
+public class MainActivity extends AppCompatActivity implements ActivityStarter,
         View.OnClickListener {
     private static final String TAG = "MainActivity";
     // This is the request code used to ask write permission
@@ -42,8 +42,7 @@ public class MainActivity extends AppCompatActivity implements ActivityStarter, 
         writePermissionAsker = new WritePermissionAsker(this, RC_WRITE_EXTERNAL_STORAGE,
                 R.string.permission_message);
         // Prepare the picPicker
-        picPicker = new PicPicker(image, this)
-                .setResultListener(this)
+        picPicker = new PicPicker(this, picResultListener)
                 .setFileForCameraListener(fileForCameraListener)
                 .setCameraAppErrorListener(cameraAppErrorListener)
                 .setPermissionErrorListener(writePermissionAsker);
@@ -52,11 +51,6 @@ public class MainActivity extends AppCompatActivity implements ActivityStarter, 
         camera.setOnClickListener(this);
     }
 
-    @Override
-    public void onPictureResult(Bitmap bitmap) {
-        Log.d(TAG, "onPictureResult: ");
-        // do something
-    }
 
     @Override
     public void onClick(View v) {
@@ -83,6 +77,13 @@ public class MainActivity extends AppCompatActivity implements ActivityStarter, 
             super.onActivityResult(requestCode, resultCode, data);
     }
 
+    private PicResultListener picResultListener = new PicResultListener() {
+        @Override
+        public void onPictureResult(Bitmap bitmap) {
+            Log.d(TAG, "onPictureResult: ");
+            image.setImageBitmap(bitmap);
+        }
+    };
     private CantFindCameraAppErrorListener cameraAppErrorListener = new CantFindCameraAppErrorListener() {
         @Override
         public void cantFindCameraApp() {
