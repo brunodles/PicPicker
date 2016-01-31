@@ -6,10 +6,9 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
+import com.github.brunodles.pic_picker.listener.AnimationListener;
 import com.github.brunodles.pic_picker.listener.PicResultListener;
 
 import java.io.ByteArrayOutputStream;
@@ -33,6 +32,7 @@ class AddImageAsyncTask extends AsyncTask<Void, Void, Bitmap> {
 
     private int quality;
     private PicResultListener listener;
+    private AnimationListener animationListener;
 
     public AddImageAsyncTask(ImageView view, Uri url) {
         this.view = view;
@@ -45,17 +45,15 @@ class AddImageAsyncTask extends AsyncTask<Void, Void, Bitmap> {
         return this;
     }
 
+    public AddImageAsyncTask setAnimationListener(AnimationListener animationListener) {
+        this.animationListener = animationListener;
+        return this;
+    }
+
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        view.setAlpha(0.3f);
-        loadTempImage();
-    }
-
-    protected void loadTempImage() {
-//        PicassoUtil.with(view)
-//                .fit()
-//                .load(url);
+        if (animationListener!=null) animationListener.onPreExecute(view);
     }
 
     @Override
@@ -179,14 +177,11 @@ class AddImageAsyncTask extends AsyncTask<Void, Void, Bitmap> {
     @Override
     protected void onPostExecute(Bitmap bitmap) {
         if (bitmap == null) {
-            view.setAlpha(0f);
-            view.setImageResource(android.R.color.white);
-            view.setAlpha(1f);
+            if (animationListener!=null) animationListener.onFail(view);
         } else {
+            if (animationListener!=null) animationListener.onBeforeSetBitmap(view);
             view.setImageBitmap(bitmap);
-            Animation animation = AnimationUtils.loadAnimation(getContext(), android.R.anim.fade_in);
-            view.setAlpha(1f);
-            view.startAnimation(animation);
+            if (animationListener!=null) animationListener.onAfterSetBitmap(view);
         }
         if (listener != null) listener.onPictureResult(bitmap);
     }
