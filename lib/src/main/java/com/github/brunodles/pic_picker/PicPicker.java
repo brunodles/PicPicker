@@ -13,7 +13,6 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.widget.ImageView;
 
 import com.github.brunodles.pic_picker.listener.ActivityStarter;
 import com.github.brunodles.pic_picker.listener.CantFindCameraAppErrorListener;
@@ -47,34 +46,36 @@ public final class PicPicker {
     public static int REQUEST_CODE_TAKE_PICURE = 9124;
 
     private Uri fileUri;
-    private ImageView userImage;
-    private ActivityStarter activityStarter;
-    private PicResultListener listener;
+    private final Context context;
+    private final ActivityStarter activityStarter;
+    private final PicResultListener listener;
 
     private CantFindCameraAppErrorListener cameraAppErrorListener;
     private NeedWritePermissionErrorListener permissionErrorListener;
     private ErrorCreatingTempFileForCameraListener fileForCameraListener;
 
     /**
-     * @param userImage       A view to send the image.
+     * @param context         a Context
      * @param activityStarter an activity starter, can be an {@link Activity} or an
      *                        {@link android.support.v4.app.Fragment}
+     * @param listener        A interface able to receive results.All images captured by this class will be passed to this listener on
+     *                        {@link PicResultListener#onPictureResult(Bitmap)}.
      */
-    public PicPicker(ImageView userImage, ActivityStarter activityStarter) {
-        this.userImage = userImage;
+    public PicPicker(Context context, ActivityStarter activityStarter, PicResultListener listener) {
+        this.context = context;
         this.activityStarter = activityStarter;
+        this.listener = listener;
     }
 
     /**
-     * A method to set the listener.
-     * All images captured by this class will be passed to this listener on
-     * {@link PicResultListener#onPictureResult(Bitmap)}.
-     *
-     * @param listener A interface able to receive results.
+     * @param activity an activity to serve as {@link Context} and as a {@link ActivityStarter}
+     * @param listener A interface able to receive results.All images captured by this class will be passed to this listener on
+     *                 {@link PicResultListener#onPictureResult(Bitmap)}.
      */
-    public PicPicker setResultListener(PicResultListener listener) {
+    public PicPicker(Activity activity, PicResultListener listener) {
+        this.context = activity;
         this.listener = listener;
-        return this;
+        this.activityStarter = new Activity_ActivityStarter(activity);
     }
 
     /**
@@ -137,7 +138,7 @@ public final class PicPicker {
      * To set the listener just call {@link #setResultListener(PicResultListener)}.
      */
     public void camera() {
-        int permissionCheck = ContextCompat.checkSelfPermission(getContext(),
+        int permissionCheck = ContextCompat.checkSelfPermission(context,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE);
         if (permissionCheck == PackageManager.PERMISSION_GRANTED)
             startCameraIntent();
@@ -150,10 +151,6 @@ public final class PicPicker {
             Log.e(TAG, "Hey dev, you need to call `setPermissionErrorListener` on PicPicker, to manage permission error.");
         else
             permissionErrorListener.needWritePermission();
-    }
-
-    private Context getContext() {
-        return userImage.getContext();
     }
 
     private void startCameraIntent() {
@@ -193,7 +190,7 @@ public final class PicPicker {
     }
 
     private PackageManager getPackageManager() {
-        return getContext().getPackageManager();
+        return context.getPackageManager();
     }
 
     @SuppressLint("SimpleDateFormat")
@@ -221,13 +218,11 @@ public final class PicPicker {
     public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK)
             if (requestCode == REQUEST_CODE_ATTACH_IMAGE) {
-                new AddImageAsyncTask(userImage, data.getData())
-                        .setListener(listener)
+                new AddImageAsyncTask(context, data.getData(), listener)
                         .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 return true;
             } else if (requestCode == REQUEST_CODE_TAKE_PICURE) {
-                new AddImageAsyncTask(userImage, fileUri)
-                        .setListener(listener)
+                new AddImageAsyncTask(context, fileUri, listener)
                         .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 return true;
             }
