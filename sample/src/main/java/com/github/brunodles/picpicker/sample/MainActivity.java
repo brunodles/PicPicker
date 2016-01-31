@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.github.brunodles.compressor.BitmapCompressor;
 import com.github.brunodles.pic_picker.PicPicker;
 import com.github.brunodles.pic_picker.impl.WritePermissionAsker;
 import com.github.brunodles.pic_picker.listener.ActivityStarter;
@@ -79,9 +80,16 @@ public class MainActivity extends AppCompatActivity implements ActivityStarter,
 
     private PicResultListener picResultListener = new PicResultListener() {
         @Override
-        public void onPictureResult(Bitmap bitmap) {
+        public void onPictureResult(final Bitmap bitmap) {
             Log.d(TAG, "onPictureResult: ");
             image.setImageBitmap(bitmap);
+            new BitmapCompressor(400) {
+                @Override
+                protected void onPostExecute(Bitmap[] bitmaps) {
+                    Log.d(TAG, "bitmapCompressor.onPostExecute: ");
+                    image.setImageBitmap(bitmaps[0]);
+                }
+            }.execute(bitmap);
         }
     };
     private CantFindCameraAppErrorListener cameraAppErrorListener = new CantFindCameraAppErrorListener() {
