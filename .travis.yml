@@ -1,0 +1,48 @@
+language: android
+
+jdk:
+ - oraclejdk8
+
+before_install:
+ - chmod +x gradlew
+
+android:
+  components:
+    # Uncomment the lines below if you want to
+    # use the latest revision of Android SDK Tools
+    - platform-tools
+    - tools
+
+    # The BuildTools version used by your project
+    - build-tools-23.0.2
+
+    # The SDK version used to compile your project
+    - android-23
+
+    # Additional components
+    #- extra-google-google_play_services
+    - extra-google-m2repository
+    - extra-android-m2repository
+
+    # Specify at least one system image,
+    # if you need to run emulator(s) during your tests
+    #- sys-img-armeabi-v7a-android-19
+    #- sys-img-x86-android-17
+
+
+#before_script:
+#    - echo no | android create avd --force -n test -t android-17 --abi armeabi-v7a
+#    - emulator -avd test -no-skin -no-audio -no-window &
+#    - android-wait-for-emulator
+#    - adb shell input keyevent 82 &
+
+# This will run all tests, including the sample and instrumentation tests, requires a connected device.
+#script: ./gradlew build connectedCheck
+
+# So, let's use this for awhile, jus run unit test for the lib
+script: ./gradlew build lib:test
+
+notifications:
+  email: false
+
+sudo: false
