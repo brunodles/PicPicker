@@ -27,7 +27,9 @@ First make a property on your `activity` or `fragment`, like this.
 ```private PicPicker picPicker;```
 
 Then on the `onCreate` method you should initialize it.
-```picPicker = new PicPicker(imageView, this)```
+```java
+picPicker = new PicPicker(imageView, this)
+```
 
 That `this` on the code means the `ActivityStarter` it's a class that will start the camera or
 gallery app intent.
@@ -37,7 +39,7 @@ response will be sent.
 
 Now we need to pass the result to the lib and to do that we just need to _override_
 `onActivityResult` and pass it's parameters to the lib, just like that.
-```
+```java
 @Override
 protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     picPicker.onActivityResult(requestCode, resultCode, data);
@@ -50,12 +52,12 @@ when made something to it.
 
 ## Using it
 Now to use the lib is so simple, to pick a image from the gallery just call.
-```
+```java
 picPicker.gallery();
 ```
 
 If you want to grab a image from the camera call.
-```
+```java
 picPicker.camera();
 ```
 
