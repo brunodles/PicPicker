@@ -1,71 +1,48 @@
 package com.github.brunodles.compressor;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.util.Log;
-
-import java.io.ByteArrayOutputStream;
 
 /**
  * This class will help you to compress your bitmap.
  * When you get images from the others that image can have huge sizes, and sometimes we don't need
- * all that quality. Then you can use this class to help you with that. Just inform the wanted
- * image size (in kbytes).
- * <p/>
+ * all that. Then you can use this class to help you with that. Just inform the wanted
+ * image size (in kbytes) and how you want to compress it.
+ * <p>
+ * Look {@link Compressor} and it's implementations {@link QualityCompressor} and {@link SizeCompressor}
+ * <p>
  * Created by bruno on 31/01/16.
  */
 public class BitmapCompressor extends AsyncTask<Bitmap, Void, Bitmap[]> {
 
     private static final String TAG = "BitmapCompressor";
 
-    private static final Bitmap.CompressFormat DEFAULT_FILE_FORMAT = Bitmap.CompressFormat.JPEG;
-
-    private ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-    private int targetSize;
+    private final Compressor compressor;
+    private final int targetSize;
 
     /**
+     * @param compressor         the script that will be used to compress the image {@link Compressor}
      * @param targetSizeInKbytes the wanted image size in kbytes.
      */
-    public BitmapCompressor(int targetSizeInKbytes) {
+    public BitmapCompressor(Compressor compressor, int targetSizeInKbytes) {
+        this.compressor = compressor;
         this.targetSize = targetSizeInKbytes;
     }
 
-    private Bitmap compress(Bitmap bitmap) {
-        int quality = 90;
-        int interactions = 0;
-        while (quality >= 0) {
-            try {
-                Log.d(TAG, "compress: quality " + quality);
-                out.reset();
-                bitmap.compress(DEFAULT_FILE_FORMAT, quality, out);
-                int currentSize = out.size() / 1024;
-                Log.d(TAG, "compress: currentSize " + currentSize);
-                if (currentSize <= targetSize)
-                    break;
-                int nextQuality = ((targetSize * quality) / currentSize);
-                if (nextQuality == quality)
-                    break;
-                else
-                    quality = nextQuality;
-            } catch (Exception e) {
-                Log.e(TAG, "Error compressing bitmap " + quality, e);
-            }
-            interactions++;
-            if (interactions > 5)
-                break;
-        }
-        if (out.size() > 0)
-            return BitmapFactory.decodeByteArray(out.toByteArray(), 0, out.size());
-        return bitmap;
+    /**
+     * This use the {@link QualityCompressor} to compress the image.
+     *
+     * @param targetSizeInKbytes the wanted image size in kbytes.
+     */
+    public BitmapCompressor(int targetSizeInKbytes) {
+        this(new QualityCompressor(), targetSizeInKbytes);
     }
 
     @Override
     protected Bitmap[] doInBackground(Bitmap... params) {
         Bitmap[] bitmaps = new Bitmap[params.length];
         for (int i = 0; i < params.length; i++) {
-            bitmaps[i] = compress(params[i]);
+            bitmaps[i] = compressor.compress(params[i], targetSize);
         }
         return bitmaps;
     }
